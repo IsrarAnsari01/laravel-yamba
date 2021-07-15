@@ -1,3 +1,6 @@
+<?php
+$flag = false;
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -19,46 +22,65 @@
         <div class="row">
             <div class="col-lg-10">
                 <div class="mt-4">
+                    @if(sizeof($retriveAllPost["catgories"]))
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="card mt-4">
+                                <div class="card-header bg-dark ">
+                                    <h2 class="lead text-white">Filter Our Blogs Through Category</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="card mt-2">
+                                <div class="card-body">
+                                    <form class="form-inline my-2 my-lg-0" method="post" action="{{route('Post.find')}}">
+                                        @csrf
+                                        <div class="form-group">
+                                            <select name="filterCat" class="form-control" id="filterCat">
+                                                <option value="NUll" disabled selected> Chose one</option>
+                                                @foreach($retriveAllPost["catgories"] as $value)
+                                                <option value="{{$value->id}}">{{$value->name}}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @if($flag)
+                    <div class="row">
+                        <a href="post" <?php $flag = false; ?> class="btn btn-block btn-danger"> Reset Now</a>
+                    </div>
+                    @endif
+                    @endif
+                </div>
+                <div class="mt-4">
+                    @if(sizeof($retriveAllPost["posts"]))
+                    @foreach($retriveAllPost["posts"] as $key => $value)
                     <div class="card mt-2 mb-5">
                         <div class="card-body">
                             <h2 class="card-title">
-                                <a href="#">Heavy Rain in Karachi</a> <br>
+                                <a href="{{route('Post.full', [$value->id])}}">{{$value->title}}</a> <br>
                             </h2>
-                            <p class="muted lead"> Date: 19-05-2021</p>
-                            <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Sed voluptates officia quod exercitationem tempore ipsa, voluptatem, asperiores perspiciatis adipisci numquam, minus ex aut eveniet delectus quae iste cupiditate? Consequuntur illo corporis officia natus quidem, sequi ea fugiat corrupti explicabo nulla vel laudantium. Aliquid omnis ipsum facilis expedita voluptate eaque praesentium.</p>
-                            <a href="#" class="btn btn-block btn-success">Read More >></a>
+                            <p class="muted lead">{{$value->created_at}}</p>
+                            <p>{{strlen($value->body) > 250 ? substr($value->body, 0, 250) . '...' :$value->body }}</p>
+                            <a href="{{route('Post.full', [$value->id])}}" class="btn btn-block btn-success">Read More >></a>
                         </div>
                     </div>
+                    @endforeach
+                    @endif
+                    @if(!sizeof($retriveAllPost["posts"]))
                     <div class="card mt-2 mb-5">
                         <div class="card-body">
                             <h2 class="card-title">
-                                <a href="#">Heavy Rain in Karachi</a> <br>
+                                Sorry We don't have any post yet!
                             </h2>
-                            <p class="muted lead"> Date: 19-05-2021</p>
-                            <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Sed voluptates officia quod exercitationem tempore ipsa, voluptatem, asperiores perspiciatis adipisci numquam, minus ex aut eveniet delectus quae iste cupiditate? Consequuntur illo corporis officia natus quidem, sequi ea fugiat corrupti explicabo nulla vel laudantium. Aliquid omnis ipsum facilis expedita voluptate eaque praesentium.</p>
-                            <a href="#" class="btn btn-block btn-success">Read More >></a>
                         </div>
                     </div>
-                    <div class="card mt-2 mb-5">
-                        <div class="card-body">
-                            <h2 class="card-title">
-                                <a href="#">Heavy Rain in Karachi</a> <br>
-                            </h2>
-                            <p class="muted lead"> Date: 19-05-2021</p>
-                            <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Sed voluptates officia quod exercitationem tempore ipsa, voluptatem, asperiores perspiciatis adipisci numquam, minus ex aut eveniet delectus quae iste cupiditate? Consequuntur illo corporis officia natus quidem, sequi ea fugiat corrupti explicabo nulla vel laudantium. Aliquid omnis ipsum facilis expedita voluptate eaque praesentium.</p>
-                            <a href="#" class="btn btn-block btn-success">Read More >></a>
-                        </div>
-                    </div>
-                    <div class="card mt-2 mb-5">
-                        <div class="card-body">
-                            <h2 class="card-title">
-                                <a href="#">Heavy Rain in Karachi</a> <br>
-                            </h2>
-                            <p class="muted lead"> Date: 19-05-2021</p>
-                            <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Sed voluptates officia quod exercitationem tempore ipsa, voluptatem, asperiores perspiciatis adipisci numquam, minus ex aut eveniet delectus quae iste cupiditate? Consequuntur illo corporis officia natus quidem, sequi ea fugiat corrupti explicabo nulla vel laudantium. Aliquid omnis ipsum facilis expedita voluptate eaque praesentium.</p>
-                            <a href="#" class="btn btn-block btn-success">Read More >></a>
-                        </div>
-                    </div>
+                    @endif
                 </div>
                 <div class="mt-4 pt-4">
                     <a href="/addBlog" class="btn btn-block btn-info">Add new Blog</a>
@@ -69,7 +91,7 @@
                     <div class="col-lg-12 mt-5 mb-3">
                         <div class="card">
                             <div class="card-body  pt-5 pb-5 bg-success text-white">
-                                <i class="fa fa-users"></i> Total Number Of user 02
+                                <i class="fa fa-users"></i> Total Number Of user {{$retriveAllPost["userLength"]}}
                             </div>
                         </div>
                     </div>
@@ -78,18 +100,13 @@
                     <div class="col-lg-12 mt-5 mb-3">
                         <div class="card">
                             <div class="card-body  pt-5 pb-5 bg-secondary text-white">
-                                <i class="fa fa-edit"></i> Total Number Of Posts 02
+                                <i class="fa fa-edit"></i> Total Number Of Posts {{sizeof($retriveAllPost["posts"])}}
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-lg-12 mt-5 mb-3">
-                        <div class="card">
-                            <div class="card-body  pt-5 pb-5 bg-info text-white">
-                                <i class="fa fa-comments"></i> Number Of Comments 02
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>

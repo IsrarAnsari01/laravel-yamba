@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Author;
+use Illuminate\Contracts\Session\Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
 
 class AuthorController extends Controller
 {
@@ -16,6 +18,10 @@ class AuthorController extends Controller
      */
     public function index()
     {
+        if (session()->get("userId")) {
+            $userId = session()->get("userId");
+            return Redirect::to("authorDashboard/{$userId}");
+        }
         return view("yamba/login");
     }
 
@@ -42,7 +48,7 @@ class AuthorController extends Controller
         $author->email = $request->input("email");
         $author->password = $request->input("password");
         $author->save();
-        return redirect("/loginPage");
+        return Redirect::to("/loginPage");
     }
 
     /**
@@ -51,8 +57,11 @@ class AuthorController extends Controller
      * @param  \App\Models\Author  $author
      * @return \Illuminate\Http\Response
      */
-    public function show(Author $author, $authorId)
+    public function show(Request $request, Author $author, $authorId)
     {
+        if (!$request->session()->get('userId')) {
+            return Redirect::to('loginPage');
+        }
         $userComments = Author::find($authorId)->comment;
         $userPosts = Author::find($authorId)->post;
         $userInformation = Author::find($authorId);
@@ -80,13 +89,16 @@ class AuthorController extends Controller
      */
     public function update(Request $request, Author $author)
     {
-        $author = new Author($request->id);
+        if (!$request->session()->get('userId')) {
+            Redirect::to('loginPage');
+        }
+        $author = Author::find($request->id);
         $author->name = $request->input("name");
         $author->email = $request->input("email");
         $author->password = $request->input("password");
         $author->save();
         $updatedUser = Author::find($request->id);
-        return redirect("authorDashboard/{{$updatedUser->id}}");
+        return redirect("authorDashboard/$updatedUser->id");
     }
 
     /**
@@ -95,19 +107,27 @@ class AuthorController extends Controller
      * @param  \App\Models\Author  $author
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Author $author, $author_id)
+    public function destroy(Request $request, Author $author, $author_id)
     {
         Author::destroy(array("id", $author_id));
-        return redirect("/");
+        $request->session()->flush();
+        return  Redirect::to('/');
     }
     public function loginUser(Request $request)
     {
         $userEmail = $request->input("email");
         $userPassword = $request->input("password");
-        $findUser = DB::table("authors")->where(["email" => $userEmail, "password" => $userPassword])->get();
+        $findUser = DB::table("authors")->where(["email" => $userEmail, "password" => $userPassword])->first();
         if ($findUser) {
-            return redirect("authorDashboard/{$findUser[0]->id}");
+            session(["userId" => $findUser->id]);
+            return redirect("authorDashboard/{$findUser->id}");
         }
         return redirect("/loginPage");
+    }
+
+    public function logoutUser(Request $request)
+    {
+        $request->session()->flush();
+        return Redirect::to('/');
     }
 }

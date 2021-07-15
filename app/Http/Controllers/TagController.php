@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Tag;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 
 class TagController extends Controller
 {
@@ -14,7 +15,7 @@ class TagController extends Controller
      */
     public function index()
     {
-        //
+        return view("yamba/addTag");
     }
 
     /**
@@ -36,8 +37,9 @@ class TagController extends Controller
     public function store(Request $request)
     {
         $tag = new Tag();
-        $tag->name = "Footboll";
+        $tag->name = $request->input("name");
         $tag->save();
+        return Redirect::to("allTags");
     }
 
     /**
@@ -48,7 +50,7 @@ class TagController extends Controller
      */
     public function show(Tag $tag)
     {
-        //
+        return view("yamba/allTags")->with("allTags", Tag::all());
     }
 
     /**
@@ -83,6 +85,6 @@ class TagController extends Controller
     public function destroy(Tag $tag, $tag_id)
     {
         Tag::destroy(array("id", $tag_id));
-        return redirect("/");
+        return Redirect::to("allTags");
     }
 }

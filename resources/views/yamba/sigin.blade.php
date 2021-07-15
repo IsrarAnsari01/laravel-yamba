@@ -29,7 +29,7 @@
                             @csrf
                             <div class="mb-3">
                                 <label for="studentName" class="form-label">Name</label>
-                                <input type="text" pattern="[A-Za-z .]{3,30}" name="name" class="form-control" id="studentName" autocomplete="off" required>
+                                <input type="text" pattern="[A-Za-z .]{2,30}" name="name" class="form-control" id="studentName" autocomplete="off" required>
                             </div>
                             <div class="mb-3">
                                 <label for="exampleInputPassword1" class="form-label">Email Address</label>

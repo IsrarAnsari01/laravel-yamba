@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 
 class CategoryController extends Controller
 {
@@ -14,7 +15,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        return view("yamba/addCategory");
     }
 
     /**
@@ -36,8 +37,9 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $cetagory = new Category();
-        $cetagory->name = "Sports";
+        $cetagory->name = $request->input("name");
         $cetagory->save();
+        return Redirect::to("allCategories");
     }
 
     /**
@@ -48,7 +50,7 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
-        //
+        return view("yamba/showCategories")->with("registeredCategories", Category::all());
     }
 
     /**
@@ -83,6 +85,6 @@ class CategoryController extends Controller
     public function destroy(Category $category,$cat_id)
     {
         Category::destroy(array("id", $cat_id));
-        return redirect("/");
+        return Redirect::to("allCategories");   
     }
 }

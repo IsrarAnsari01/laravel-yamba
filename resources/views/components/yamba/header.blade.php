@@ -1,3 +1,6 @@
+<?php 
+$userId = session()->get("userId");
+?>
 <div>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
@@ -18,18 +21,19 @@
                             Actions
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="/loginPage">Login</a></li>
+                           @if(!$userId)
+                           <li><a class="dropdown-item" href="/loginPage">Login</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li><a class="dropdown-item" href="/signPage">Sign in</a></li>
+                            <li><a class="dropdown-item" href="signPage">Sign in</a></li>
+                            @endif
+                            @if($userId)
+                            <li><a class="dropdown-item" href="/authorDashboard/{{$userId}}">Dashboard</a></li>
+                            @endif
                         </ul>
                     </li>
                 </ul>
-                <form class="d-flex">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-light" type="submit">Search</button>
-                </form>
             </div>
         </div>
     </nav>
