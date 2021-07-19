@@ -41,7 +41,7 @@ class CommentController extends Controller
     public function store(Request $request, $author_id, $post_id)
     {
         $validator = Validator::make($request->all(), [
-            'email'     => "required|email|unique:users",
+            'email'     => "required|email",
             'body'     => 'required',
         ]);
 
