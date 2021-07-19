@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Validator;
 
 class TagController extends Controller
 {
@@ -15,6 +16,9 @@ class TagController extends Controller
      */
     public function index()
     {
+        if (!session()->get("userId")) {
+            return Redirect::to('loginPage');
+        }
         return view("yamba/addTag");
     }
 
@@ -36,10 +40,18 @@ class TagController extends Controller
      */
     public function store(Request $request)
     {
-        $tag = new Tag();
-        $tag->name = $request->input("name");
-        $tag->save();
-        return Redirect::to("allTags");
+        $validator = Validator::make($request->all(), [
+            'name'      => 'required|max:100',
+        ]);
+
+        if ($validator->fails()) {
+            return back()->withErrors($validator);
+        } else {
+            $tag = new Tag();
+            $tag->name = $request->input("name");
+            $tag->save();
+            return Redirect::to("allTags");
+        }
     }
 
     /**

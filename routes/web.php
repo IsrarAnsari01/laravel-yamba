@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\TagController;
 
 /*
@@ -26,7 +27,10 @@ Route::get('/addBlog', [PostController::class, 'create'])->name('addBlog');
 Route::post("submitPost/{id}", [PostController::class, 'store']);
 Route::get("deleteBlog/{id}", [PostController::class, 'destroy'])->name("Post.delete");
 Route::post("filterPost", [PostController::class, 'filterPost'])->name("Post.find");
-Route::get("fullPost/{id}", [PostController::class, 'show'])->name("Post.full");
+Route::post("TagPosts", [PostController::class, 'filterPostThroughTags'])->name("Post.findTags");
+Route::get("fullPost/{id}", [PostController::class, 'singlePost'])->name("Post.full");
+Route::get("updatePost/{id}", [PostController::class, 'edit'])->name("Post.edit");
+Route::get("saveUpdatedData/{id}&{auth_id}", [PostController::class, 'singlePost'])->name("Post.update");
 
 // User / Author Routes
 Route::get("signPage", [AuthorController::class, 'create']);
@@ -41,12 +45,15 @@ Route::get("logoutUser", [AuthorController::class, 'logoutUser'])->name("Author.
 
 // Category Routes
 Route::get("categoryPage", [CategoryController::class, "index"]);
-Route::post("addCategory", [CategoryController::class, "store"]);
+Route::post("addCategory", [CategoryController::class, "store"])->name("Category.add");
 Route::get("allCategories", [CategoryController::class, "show"]);
 Route::get("deleteCat/{id}", [CategoryController::class, "destroy"]);
 
 //Tags Routes
 Route::get("tagPage", [TagController::class, "index"]);
-Route::post("addTags", [TagController::class, "store"]);
+Route::post("addTags", [TagController::class, "store"])->name("Tag.add");
 Route::get("allTags", [TagController::class, "show"]);
 Route::get("deleteTag/{id}", [TagController::class, "destroy"]);
+
+//Comments Route
+Route::post("addComment/{id}&{post_id}", [CommentController::class, "store"])->name("Comment.save");

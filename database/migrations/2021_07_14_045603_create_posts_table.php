@@ -17,6 +17,7 @@ class CreatePostsTable extends Migration
             $table->id();
             $table->string("title");
             $table->text("body");
+            $table->string("blogImg");
             $table->unsignedBigInteger("author_id");
             $table->foreign("author_id")->references("id")->on("authors")->onDelete('cascade');
             $table->unsignedBigInteger("category_id");

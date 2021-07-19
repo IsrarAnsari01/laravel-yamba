@@ -54,7 +54,7 @@ $userId = session("userId");
                                     <tr>
                                         <th scope="row">{{++$sno}}</th>
                                         <td>{{$value->title}}</td>
-                                        <td><a href="#" class="btn btn-warning">Edit</a></td>
+                                        <td><a href="{{route('Post.edit', [$value->id])}}" class="btn btn-warning">Edit</a></td>
                                         <td><a href="{{route('Post.delete', [$value->id])}}" class="btn btn-danger">Delete</a></td>
                                     </tr>
                                     @endforeach

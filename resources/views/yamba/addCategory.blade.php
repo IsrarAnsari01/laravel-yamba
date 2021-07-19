@@ -25,12 +25,17 @@
                 </div>
                 <div class="card">
                     <div class="card-body">
-                        <form method="post" action="addCategory">
+                        <form method="post" action="{{route('Category.add')}}">
                             @csrf
                             <div class="mb-3">
                                 <label for="studentName" class="form-label">Name</label>
                                 <input type="text" pattern="[A-Za-z .]{2,30}" name="name" class="form-control" id="studentName" autocomplete="off" required>
                             </div>
+                            @error('name')
+                            <div class="alert alert-danger" role="alert">
+                                {{$message}}
+                            </div>
+                            @enderror
                             <button type="submit" class="btn btn-primary btn-block">Submit</button>
                         </form>
 

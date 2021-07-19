@@ -9,13 +9,12 @@ use App\Models\Comment;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Validator;
 
 class PostController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Home Page | Get Req 
      */
     public function index()
     {
@@ -26,9 +25,7 @@ class PostController extends Controller
         return view("yamba/home")->with("data", $arrToBeSend);
     }
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Add Blog Page | Get Req 
      */
     public function create()
     {
@@ -40,80 +37,97 @@ class PostController extends Controller
         $tagsAndCategories = array("tags" => $registeredTags, "categories" => $registeredCategories);
         return view("yamba/addBlog")->with("tagsAndCats", $tagsAndCategories);
     }
-
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * Save New Blog | Post Req 
      */
     public function store(Request $request, $author_id)
     {
-        $post = new Post();
-        $cat_id = $request->input("category");
-        $post->title = $request->input("title");
-        $post->body = $request->input("body");
-        $post->author_id = $author_id;
-        $post->category_id = $cat_id;
-        $post->save();
-        $tagIds = $request->input("tag_id");
-        $post->tag()->attach($tagIds);
-        return Redirect::to("/addBlog");
-    }
+        $validator = Validator::make($request->all(), [
+            'title'      => 'required|unique:posts|max:255',
+            'tag_id'     => 'required',
+            'category' => 'required',
+            'image' => 'mimes:jpeg,jpg,png,gif|required|max:10000',
+            'body'     => 'required',
 
+        ]);
+
+        if ($validator->fails()) {
+            return back()->withErrors($validator);
+        } else {
+            $filenameWithExt = $request->file('image')->getClientOriginalName();
+            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+            $extension = $request->file('image')->getClientOriginalExtension();
+            $fileNameToStore = $filename . "_" . time() . "." . $extension;
+            $path = $request->file('image')->storeAs("public/images/blogImage", $fileNameToStore);
+            $post = new Post();
+            $cat_id = $request->input("category");
+            $post->title = $request->input("title");
+            $post->body = $request->input("body");
+            $post->blogImg = $fileNameToStore;
+            $post->author_id = $author_id;
+            $post->category_id = $cat_id;
+            $post->save();
+            $tagIds = $request->input("tag_id");
+            $post->tag()->attach($tagIds);
+            return Redirect::to("/addBlog");
+        }
+    }
     /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Response
+     * Display All Posts | Get Req 
      */
     public function show(Post $post)
     {
         $allUsers = Author::all();
         $categories = Category::all();
-        $postAnduser = array("posts" => Post::all(), "userLength" => sizeof($allUsers), "catgories" => $categories);
+        $registeredTags = Tag::all();
+        $postAnduser = array("posts" => Post::all(), "userLength" => sizeof($allUsers), "catgories" => $categories, "registerTags" => $registeredTags, "flag" => false);
         return view("yamba/post")->with("retriveAllPost", $postAnduser);
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Response
+     * Edit Blog Page | Get Req 
      */
+
     public function edit(Post $post, $post_id)
     {
-        return view("editPost")->with("singlePost", Post::find($post_id));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Post $post, $post_id, $author_id, $cat_id)
-    {
-        $author = Author::find($author_id);
-        $postCat = Category::find($cat_id);
+        $registeredCategories = Category::all();
+        $allTags = Tag::all();
         $post = Post::find($post_id);
-        $post->title = $request->input("title");
-        $post->body = $request->input("body");
-        $post->author_id = $author->id;
-        $post->cetagory_id = $postCat->id;
-        $post->save();
-        $tagIds = $request->input("tag_id");
-        // $tagIds = [1, 2, 3];
-        $post->tag()->attach($tagIds);
-        return redirect("/");
+        $postTag = $post->tag;
+        $tagsAndCategories = array("tags" => $postTag, "categories" => $registeredCategories, "post" => $post, "allTags" => $allTags);
+        return view("yamba/edit")->with("singlePost", $tagsAndCategories);
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Response
+     * Save Updates | Get Req 
+     */
+    public function update(Request $request, Post $post, $post_id, $author_id)
+    {
+        $validator = Validator::make($request->all(), [
+            'title'      => 'required|unique:posts|max:255',
+            'tag_id'     => 'required',
+            'category' => 'required',
+            'image' => 'mimes:jpeg,jpg,png,gif|required|max:10000',
+            'body'     => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return back()->withErrors($validator);
+        } else {
+            $post = Post::find($post_id);
+            $post->title = $request->input("title");
+            $post->body = $request->input("body");
+            $post->author_id = $author_id;
+            $post->cetagory_id = $request->input("category");
+            $post->save();
+            $tagIds = $request->input("tag_id");
+            $post->tag()->attach($tagIds);
+            return Redirect::to("post");
+        }
+    }
+
+    /**
+     * Delete Post | Get Req 
      */
     public function destroy(Post $post, $post_id)
     {
@@ -122,14 +136,69 @@ class PostController extends Controller
         return Redirect::to("authorDashboard/{$userId}");
     }
 
+
+    /**
+     * Filter Post Through Category | Post Req 
+     */
+
     public function filterPost(Request $request)
     {
         $filter = true;
         $allUsers = Author::all();
         $categories = Category::all();
+        $registeredTags = Tag::all();
         $cat_id = $request->input("filterCat");
         $cat_posts = Category::find($cat_id)->post;
-        $postAnduser = array("posts" => $cat_posts, "userLength" => sizeof($allUsers), "catgories" => $categories, "flag" => $filter);
+        $postAnduser = array("posts" => $cat_posts, "userLength" => sizeof($allUsers), "registerTags" => $registeredTags, "catgories" => $categories, "flag" => $filter);
         return view("yamba/post")->with("retriveAllPost", $postAnduser);
+    }
+
+    /**
+     * Get Tags and return related Post 
+     */
+
+    public function sortingPosts($tags)
+    {
+        $filterPost = array();
+        $tag_posts = array();
+        foreach ($tags as $tag) {
+            array_push($filterPost, $tag->posts);
+        }
+        foreach ($filterPost as $posts) {
+            foreach ($posts as $singlePost) {
+                array_push($tag_posts, $singlePost);
+            }
+        }
+        return $tag_posts;
+    }
+    /**
+     * Filter post through Tags | Post Req 
+     */
+
+    public function filterPostThroughTags(Request $request)
+    {
+        $filter = true;
+        $allUsers = Author::all();
+        $categories = Category::all();
+        $registeredTags = Tag::all();
+        $tag_ids = $request->input("tag_ids");
+        $tags = Tag::find($tag_ids);
+        $tag_posts = $this->sortingPosts($tags);
+        $postAnduser = array("posts" => $tag_posts, "userLength" => sizeof($allUsers), "registerTags" => $registeredTags, "catgories" => $categories, "flag" => $filter);
+        return view("yamba/post")->with("retriveAllPost", $postAnduser);
+    }
+
+    public function singlePost(Post $post, $post_id)
+    {
+        if (!session()->get("userId")) {
+            return Redirect::to('loginPage');
+        }
+        $allUsers = Author::all();
+        $posts = Post::all();
+        $singlePost = Post::find($post_id);
+        $postTags = $singlePost->tag;
+        $postComment = $singlePost->comment;
+        $post = array("post" => $singlePost, "postTags" => $postTags, "postComment" => $postComment, "userLength" => sizeof($allUsers), "postLength" => sizeof($posts));
+        return view("yamba/singlePost")->with("data", $post);
     }
 }

@@ -1,5 +1,6 @@
 <?php
 $userId = session()->get("userId");
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -13,7 +14,7 @@ $userId = session()->get("userId");
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{asset('css/app.css')}}>)}}">
     <script src="{{asset('js/bootstrap.bundle.js')}}"></script>
-    <title>Add Blog Form</title>
+    <title>Edit Blog Form</title>
 </head>
 
 <body>
@@ -23,16 +24,16 @@ $userId = session()->get("userId");
             <div class="col-lg-10">
                 <div class="card bg-info mt-5 text-light">
                     <div class="card-body">
-                        <h2 class="card-title lead"><i class="fa fa-edit"></i> Welcome Back use add new blog</h2>
+                        <h2 class="card-title lead"><i class="fa fa-edit"></i> Welcome Back edit {{$singlePost["post"]->title}}</h2>
                     </div>
                 </div>
                 <div class="card">
                     <div class="card-body">
-                        <form method="post" action="submitPost/{{$userId}}" enctype="multipart/form-data">
+                        <form method="post" action="{{route('Post.update', [$singlePost['post']->id,$userId ])}}">
                             @csrf
                             <div class="mb-3">
                                 <label for="studentName" class="form-label">Title</label>
-                                <input type="text" pattern="[A-Za-z0-9 .]{3,}" name="title" class="form-control" id="studentName" autocomplete="off" required>
+                                <input type="text" pattern="[A-Za-z0-9 .]{3,}" value="{{$singlePost['post']->title}}" name="title" class="form-control" id="studentName" autocomplete="off" required>
                             </div>
                             @error('title')
                             <div class="alert alert-danger" role="alert">
@@ -42,14 +43,18 @@ $userId = session()->get("userId");
                             <div class="form-group mb-3">
                                 <label for="category">Select Mulitple Tags</label>
                                 <select id="category" class="form-control" name="tag_id[]" multiple required>
-                                    <option disabled selected>Choose one</option>
-                                    @if(sizeof($tagsAndCats["tags"]))
-                                    @foreach($tagsAndCats["tags"] as $key => $value)
-                                    <option value={{$value->id}}>{{$value->name}}</option>
+                                    @if(sizeof($singlePost["tags"]))
+                                    @foreach($singlePost["tags"] => $value)
+                                    <option value={{$value->id}} selected>{{$value->name}}</option>
                                     @endforeach
                                     @endif
-                                    @if(!sizeof($tagsAndCats["tags"]))
-                                    <option selected disabled value="null">We Don't have any tags write now</option>
+                                    @if(sizeof($singlePost["allTags"]))
+                                    @foreach($singlePost["allTags"] => $value)
+                                    <option value={{$value->id}} >{{$value->name}}</option>
+                                    @endforeach
+                                    @endif
+                                    @if(!sizeof($singlePost["tags"]) || !sizeof($singlePost["allTags"]))
+                                    <option selected disabled value="null">You Don't Select any tags</option>
                                     @endif
                                 </select>
                             </div>
@@ -61,20 +66,16 @@ $userId = session()->get("userId");
                             <div class="form-group mb-3">
                                 <label for="category">Select Category</label>
                                 <select id="category" class="form-control" name="category" required>
-                                    <option disabled selected>Choose one</option>
-                                    @if(sizeof($tagsAndCats["categories"]))
-                                    @foreach($tagsAndCats["categories"] as $key => $value)
+                                    <option value="#">Select Category</option>
+                                    @if(sizeof($singlePost["categories"]))
+                                    @foreach($singlePost["categories"] as $key => $value)
                                     <option value={{$value->id}}>{{$value->name}}</option>
                                     @endforeach
                                     @endif
-                                    @if(!sizeof($tagsAndCats["categories"]))
+                                    @if(!sizeof($singlePost["categories"]))
                                     <option selected disabled value="null">We Don't have any Category write now</option>
                                     @endif
                                 </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="exampleFormControlFile1">Add Blog image</label>
-                                <input type="file" name="image" required class="form-control-file" id="exampleFormControlFile1">
                             </div>
                             @error('category')
                             <div class="alert alert-danger" role="alert">
@@ -83,7 +84,7 @@ $userId = session()->get("userId");
                             @enderror
                             <div class="form-group mb-3">
                                 <label for="exampleFormControlTextarea1">Enter Blog Text</label>
-                                <textarea class="form-control" name="body" id="exampleFormControlTextarea1" required rows="10"></textarea>
+                                <textarea class="form-control" name="body" value="{{$singlePost['post']->body}}" id="exampleFormControlTextarea1" required rows="10"></textarea>
                             </div>
                             @error('body')
                             <div class="alert alert-danger" role="alert">

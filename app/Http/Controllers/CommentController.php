@@ -6,6 +6,9 @@ use App\Models\Comment;
 use App\Models\Author;
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Validator;
+
 
 class CommentController extends Controller
 {
@@ -37,14 +40,24 @@ class CommentController extends Controller
      */
     public function store(Request $request, $author_id, $post_id)
     {
-        $author = Author::find($author_id);
-        $post = Post::find($post_id);
-        $comment = new Comment();
-        $comment->email = $request->input("email");
-        $comment->body = $request->input("body");
-        $comment->author_id = $author->id;
-        $comment->post_id = $post->id;
-        $comment->save();
+        $validator = Validator::make($request->all(), [
+            'email'     => "required|email|unique:users",
+            'body'     => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return back()->withErrors($validator);
+        } else {
+            $author = Author::find($author_id);
+            $post = Post::find($post_id);
+            $comment = new Comment();
+            $comment->email = $request->input("email");
+            $comment->body = $request->input("body");
+            $comment->author_id = $author->id;
+            $comment->post_id = $post->id;
+            $comment->save();
+            return Redirect::to("fullPost/{$post_id}");
+        }
     }
 
     /**

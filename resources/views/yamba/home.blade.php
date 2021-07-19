@@ -30,6 +30,7 @@
                     @if(sizeof($data["posts"]))
                     @foreach($data["posts"] as $value)
                     <div class="card mt-2 mb-5">
+                        <a href="{{route('Post.full', [$value->id])}}"><img class="card-img-top" src="{{asset('/storage/images/blogImage/'.$value->blogImg)}}" alt="Card image cap"></a>
                         <div class="card-body">
                             <h2 class="card-title">
                                 <a href="{{route('Post.full', [$value->id])}}">{{$value->title}}</a> <br>

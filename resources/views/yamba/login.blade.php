@@ -29,10 +29,20 @@
                                     <label for="exampleInputPassword1" class="form-label">Email Address</label>
                                     <input type="email" name="email" pattern="[A-Za-z_0-9]{3,}@[A-Za-z_0-9]{3,}[.][A-Za-z.]{2,}" autocomplete="off" minlength="5" maxlength="40" class="form-control" id="exampleInputPassword1" required>
                                 </div>
+                                @error('email')
+                                <div class="alert alert-danger" role="alert">
+                                    {{$message}}
+                                </div>
+                                @enderror
                                 <div class="mb-3">
                                     <label for="password" class="form-label">Passwrod</label>
                                     <input type="password" name="password" pattern="[a-zA-Z0-9!@#$%^&*()- ]{4, }" class="form-control" autocomplete="off" id="password">
                                 </div>
+                                @error('password')
+                                <div class="alert alert-danger" role="alert">
+                                    {{$message}}
+                                </div>
+                                @enderror
                                 <button type="submit" class="btn btn-info">Login</button>
                             </form>
                             <div>

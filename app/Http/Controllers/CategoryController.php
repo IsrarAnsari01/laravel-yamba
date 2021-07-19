@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Validator;
+
 
 class CategoryController extends Controller
 {
@@ -15,6 +17,9 @@ class CategoryController extends Controller
      */
     public function index()
     {
+        if (!session()->get("userId")) {
+            return Redirect::to('loginPage');
+        }
         return view("yamba/addCategory");
     }
 
@@ -36,10 +41,18 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        $cetagory = new Category();
-        $cetagory->name = $request->input("name");
-        $cetagory->save();
-        return Redirect::to("allCategories");
+        $validator = Validator::make($request->all(), [
+            'name'      => 'required|max:100',
+        ]);
+
+        if ($validator->fails()) {
+            return back()->withErrors($validator);
+        } else {
+            $cetagory = new Category();
+            $cetagory->name = $request->input("name");
+            $cetagory->save();
+            return Redirect::to("allCategories");
+        }
     }
 
     /**
@@ -82,9 +95,9 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Category $category,$cat_id)
+    public function destroy(Category $category, $cat_id)
     {
         Category::destroy(array("id", $cat_id));
-        return Redirect::to("allCategories");   
+        return Redirect::to("allCategories");
     }
 }

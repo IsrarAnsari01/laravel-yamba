@@ -1,6 +1,3 @@
-<?php
-$flag = false;
-?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -22,18 +19,20 @@ $flag = false;
         <div class="row">
             <div class="col-lg-10">
                 <div class="mt-4">
-                    @if(sizeof($retriveAllPost["catgories"]))
+                    @if(sizeof($retriveAllPost["posts"]))
                     <div class="row">
-                        <div class="col-lg-6">
+                        <div class="col-lg-4">
                             <div class="card mt-4">
                                 <div class="card-header bg-dark ">
-                                    <h2 class="lead text-white">Filter Our Blogs Through Category</h2>
+                                    <h2 class="lead text-white">Filter Our Blogs Through Category And Tags</h2>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-6">
+                        @if(sizeof($retriveAllPost["catgories"]))
+                        <div class="col-lg-4">
                             <div class="card mt-2">
                                 <div class="card-body">
+                                    <p>Select Category</p>
                                     <form class="form-inline my-2 my-lg-0" method="post" action="{{route('Post.find')}}">
                                         @csrf
                                         <div class="form-group">
@@ -49,18 +48,41 @@ $flag = false;
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    @if($flag)
-                    <div class="row">
-                        <a href="post" <?php $flag = false; ?> class="btn btn-block btn-danger"> Reset Now</a>
+                        @endif
+                        @if(sizeof($retriveAllPost["registerTags"]))
+                        <div class="col-lg-4">
+                            <div class="card mt-2">
+                                <div class="card-body">
+                                    <p>Select Tags</p>
+                                    <form class="form-inline my-2 my-lg-0" method="post" action="{{route('Post.findTags')}}">
+                                        @csrf
+                                        <div class="form-group">
+                                            <select name="tag_ids[]" class="form-control" id="filterCat" multiple>
+                                                <option value="NUll" disabled selected> Chose one</option>
+                                                @foreach($retriveAllPost["registerTags"] as $value)
+                                                <option value="{{$value->id}}">{{$value->name}}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     @endif
+                    @endif
+                    @if($retriveAllPost["flag"])
+                    <div class="row">
+                        <a href="post" class="btn btn-block btn-danger"> Reset Now</a>
+                    </div>
                     @endif
                 </div>
                 <div class="mt-4">
                     @if(sizeof($retriveAllPost["posts"]))
                     @foreach($retriveAllPost["posts"] as $key => $value)
                     <div class="card mt-2 mb-5">
+                        <a href="{{route('Post.full', [$value->id])}}"><img class="card-img-top" src="{{asset('/storage/images/blogImage/'.$value->blogImg)}}" alt="Card image cap"></a>
                         <div class="card-body">
                             <h2 class="card-title">
                                 <a href="{{route('Post.full', [$value->id])}}">{{$value->title}}</a> <br>
