@@ -1,4 +1,4 @@
-<?php 
+<?php
 $userId = session()->get("userId");
 ?>
 <div>
@@ -16,13 +16,16 @@ $userId = session()->get("userId");
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="/post"> Posts </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/allVideos"> Short Videos </a>
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Actions
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                           @if(!$userId)
-                           <li><a class="dropdown-item" href="/loginPage">Login</a></li>
+                            @if(!$userId)
+                            <li><a class="dropdown-item" href="/loginPage">Login</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>

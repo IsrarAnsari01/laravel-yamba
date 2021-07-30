@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\TagController;
+use App\Http\Controllers\VideoUploadController;
 
 /*
 |--------------------------------------------------------------------------
@@ -57,3 +58,6 @@ Route::get("deleteTag/{id}", [TagController::class, "destroy"]);
 
 //Comments Route
 Route::post("addComment/{id}&{post_id}", [CommentController::class, "store"])->name("Comment.save");
+
+// Video Routes
+Route::get("allVideos", [VideoUploadController::class, "index"]);
