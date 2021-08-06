@@ -80,8 +80,9 @@ class AuthorController extends Controller
         }
         $userComments = Author::find($authorId)->comment;
         $userPosts = Author::find($authorId)->post;
+        $userPostedVideos = Author::find($authorId)->postedVideos;
         $userInformation = Author::find($authorId);
-        $sendArray = array("basicInfo" => $userInformation, "userPosts" => $userPosts, "userComments" => $userComments);
+        $sendArray = array("basicInfo" => $userInformation, "userPosts" => $userPosts, "userComments" => $userComments, "PostedVideos" => $userPostedVideos );
         return view("yamba/authorDashboard")->with("userInfo", $sendArray);
     }
 
@@ -164,5 +165,29 @@ class AuthorController extends Controller
     {
         $request->session()->flush();
         return Redirect::to('/');
+    }
+    public function checkVideoCatId($catIdArr , $cat_id){
+            $flag = false;
+            if(sizeof($catIdArr)){
+                foreach($catIdArr as $cat) {
+                    if($cat == $cat_id){
+                        $flag = true;
+                        break;
+                    }
+                }
+            }
+            return $flag;
+    }
+    public function updateUserVideoCategory(Author $author, $cat_id, $video_id){
+            $loggedUserId = session()->get("userId");
+            $loggedUserInfo = Author::find($loggedUserId);
+            $registeredCat_id = $loggedUserInfo->videoCat_id;
+            if($this->checkVideoCatId($registeredCat_id,  $cat_id)){
+                return redirect()->route("videoUpload.singleVideo", [$video_id]);
+            }
+            array_push($registeredCat_id,  $cat_id);
+                $loggedUserInfo->videoCat_id = $registeredCat_id;
+                $loggedUserInfo->save();
+            return redirect()->route("videoUpload.singleVideo", [$video_id]);
     }
 }

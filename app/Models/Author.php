@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Author extends Model
 {
     use HasFactory;
+    protected $casts = [
+        'videoCat_id' => 'array',
+    ];
     public function post()
     {
         return $this->hasMany(Post::class);
@@ -15,5 +18,9 @@ class Author extends Model
     public function comment()
     {
         return $this->hasMany(Comment::class);
+    }
+    public function postedVideos()
+    {
+        return $this->hasMany(videoUpload::class);
     }
 }

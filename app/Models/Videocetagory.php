@@ -4,12 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-class videoUpload extends Model
+
+class Videocetagory extends Model
 {
     use HasFactory;
-    public function Videocomment()
+    public function uploadedVideo()
     {
-        return $this->hasMany("App\Models\Videocomment", "videoupload_id", "id");
+        return $this->hasMany(videoUpload::class);
     }
-
 }

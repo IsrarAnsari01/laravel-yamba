@@ -14,10 +14,11 @@ use Illuminate\Support\Facades\Validator;
 class PostController extends Controller
 {
     /**
-     * Home Page | Get Req 
+     * Home Page | Get Req
      */
     public function index()
     {
+        // session()->flush();
         $allPosts = Post::orderBy('created_at', 'desc')->limit(5)->get();
         $allUsers = Author::all();
         $allComments = Comment::all();
@@ -25,7 +26,7 @@ class PostController extends Controller
         return view("yamba/home")->with("data", $arrToBeSend);
     }
     /**
-     * Add Blog Page | Get Req 
+     * Add Blog Page | Get Req
      */
     public function create()
     {
@@ -38,7 +39,7 @@ class PostController extends Controller
         return view("yamba/addBlog")->with("tagsAndCats", $tagsAndCategories);
     }
     /**
-     * Save New Blog | Post Req 
+     * Save New Blog | Post Req
      */
     public function store(Request $request, $author_id)
     {
@@ -73,7 +74,7 @@ class PostController extends Controller
         }
     }
     /**
-     * Display All Posts | Get Req 
+     * Display All Posts | Get Req
      */
     public function show(Post $post)
     {
@@ -85,7 +86,7 @@ class PostController extends Controller
     }
 
     /**
-     * Edit Blog Page | Get Req 
+     * Edit Blog Page | Get Req
      */
 
     public function edit(Post $post, $post_id)
@@ -99,7 +100,7 @@ class PostController extends Controller
     }
 
     /**
-     * Save Updates | Get Req 
+     * Save Updates | Get Req
      */
     public function update(Request $request, Post $post, $post_id, $author_id)
     {
@@ -127,7 +128,7 @@ class PostController extends Controller
     }
 
     /**
-     * Delete Post | Get Req 
+     * Delete Post | Get Req
      */
     public function destroy(Post $post, $post_id)
     {
@@ -138,7 +139,7 @@ class PostController extends Controller
 
 
     /**
-     * Filter Post Through Category | Post Req 
+     * Filter Post Through Category | Post Req
      */
 
     public function filterPost(Request $request)
@@ -154,7 +155,7 @@ class PostController extends Controller
     }
 
     /**
-     * Get Tags and return related Post 
+     * Get Tags and return related Post
      */
 
     public function sortingPosts($tags)
@@ -172,7 +173,7 @@ class PostController extends Controller
         return $tag_posts;
     }
     /**
-     * Filter post through Tags | Post Req 
+     * Filter post through Tags | Post Req
      */
 
     public function filterPostThroughTags(Request $request)

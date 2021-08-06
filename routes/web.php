@@ -7,6 +7,8 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\VideoUploadController;
+use App\Http\Controllers\VideocetagoryController;
+use App\Http\Controllers\VideocommentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,12 +45,20 @@ Route::get("updateInformation/{id}", [AuthorController::class, 'edit'])->name("A
 Route::post("updateUserInformation/{id}", [AuthorController::class, 'update'])->name("Author.update");
 Route::get("deleteUser/{id}", [AuthorController::class, 'destroy'])->name("Author.delete");
 Route::get("logoutUser", [AuthorController::class, 'logoutUser'])->name("Author.logout");
+Route::get("updateUserVideoCategory/{id}&{postId}", [AuthorController::class, 'updateUserVideoCategory'])->name("Author.updateCatId");
+
 
 // Category Routes
 Route::get("categoryPage", [CategoryController::class, "index"]);
 Route::post("addCategory", [CategoryController::class, "store"])->name("Category.add");
 Route::get("allCategories", [CategoryController::class, "show"]);
 Route::get("deleteCat/{id}", [CategoryController::class, "destroy"]);
+
+// Video Category Routes
+Route::get("videoCategoryPage", [VideocetagoryController::class, "index"])->name("VideoCategory.show");
+Route::post("addVideoCategory", [VideocetagoryController::class, "store"])->name("VideoCategory.add");
+Route::get("allVideoCategories", [VideocetagoryController::class, "show"]);
+Route::get("deleteVidCat/{id}", [VideocetagoryController::class, "destroy"]);
 
 //Tags Routes
 Route::get("tagPage", [TagController::class, "index"]);
@@ -60,4 +70,13 @@ Route::get("deleteTag/{id}", [TagController::class, "destroy"]);
 Route::post("addComment/{id}&{post_id}", [CommentController::class, "store"])->name("Comment.save");
 
 // Video Routes
+Route::get("uploadVideo", [VideoUploadController::class, "create"])->name("videoUpload.upload");
+Route::post("submitVideo/{id}", [VideoUploadController::class, 'store']);
 Route::get("allVideos", [VideoUploadController::class, "index"]);
+Route::get("SingleVideo/{id}", [VideoUploadController::class, "show"])->name("videoUpload.single");
+Route::get("updateVideoViews/{id}", [VideoUploadController::class, "updateViews"])->name("videoUpload.updateView");
+Route::get("viewSingleVideo/{id}", [VideoUploadController::class, "singleVideo"])->name("videoUpload.singleVideo");
+Route::get("deleteVideo/{id}", [VideoUploadController::class, "destroy"])->name("videoUpload.delete");
+//Video Comments
+Route::post("addVideoComment/{id}&{video_id}", [VideocommentController::class, "store"])->name("VideoComment.save");
+

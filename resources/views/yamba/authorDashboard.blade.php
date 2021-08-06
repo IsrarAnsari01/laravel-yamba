@@ -67,6 +67,39 @@ $userId = session("userId");
                         </div>
                     </div>
                 </div>
+                <hr>
+                <br>
+                <hr>
+                <div class="mt-3">
+                    <div class="card mt-2 mb-5">
+                        <div class="card-body">
+                            @if(sizeof($userInfo["PostedVideos"]))
+                            <table class="table table-striped table-dark">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">ID</th>
+                                        <th scope="col">Title</th>
+                                        <th scope="col">Delete</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php $sno = 0; ?>
+                                    @foreach($userInfo["PostedVideos"] as $value)
+                                    <tr>
+                                        <th scope="row">{{$value->id}}</th>
+                                        <td>{{$value->Title}}</td>
+                                        <td><a href="{{ route('videoUpload.delete', [$value->id]) }}" class="btn btn-danger">Delete</a></td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                            @endif
+                            @if(!sizeof($userInfo["PostedVideos"]))
+                            <h4>You don't post any Video yet!</h4>
+                            @endif
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="col-lg-2 mt-5">
                 <div class="row">

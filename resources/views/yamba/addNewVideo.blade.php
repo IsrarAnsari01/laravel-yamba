@@ -1,0 +1,130 @@
+<?php
+$userId = session()->get('userId');
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ asset('css/bootstrap.css') }}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}>)}}">
+    <script src="{{ asset('js/bootstrap.bundle.js') }}"></script>
+    <title>Add new Video</title>
+</head>
+
+<body>
+    <x-yamba.header />
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-10">
+                <div class="card bg-info mt-5 text-light">
+                    <div class="card-body">
+                        <h2 class="card-title lead"><i class="fa fa-edit"></i> Welcome Back use add new Video</h2>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <form method="post" action="submitVideo/{{ $userId }}" enctype="multipart/form-data">
+                            @csrf
+                            <div class="mb-3">
+                                <label for="studentName" class="form-label">Title</label>
+                                <input type="text" pattern="[A-Za-z0-9 .]{3,}" name="title" class="form-control"
+                                    id="studentName" autocomplete="off" required>
+                            </div>
+                            @error('title')
+                                <div class="alert alert-danger" role="alert">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                            {{-- <div class="form-group mb-3">
+                                <label for="category">Select Mulitple Tags</label>
+                                <select id="category" class="form-control" name="tag_id[]" multiple required>
+                                    <option disabled selected>Choose one</option>
+                                    @if (sizeof($tagsAndCats['tags']))
+                                        @foreach ($tagsAndCats['tags'] as $key => $value)
+                                            <option value={{ $value->id }}>{{ $value->name }}</option>
+                                        @endforeach
+                                    @endif
+                                    @if (!sizeof($tagsAndCats['tags']))
+                                        <option selected disabled value="null">We Don't have any tags write now</option>
+                                    @endif
+                                </select>
+                            </div>
+                            @error('tag_id')
+                                <div class="alert alert-danger" role="alert">
+                                    {{ $message }}
+                                </div>
+                            @enderror --}}
+                            <div class="form-group mb-3">
+                                <label for="category">Select Category</label>
+                                <select id="category" class="form-control" name="category" required>
+                                    <option disabled selected>Choose one</option>
+                                    @if (sizeof($data['videoCat']))
+                                        @foreach ($data['videoCat'] as $key => $value)
+                                            <option value={{ $value->id }}>{{ $value->name }}</option>
+                                        @endforeach
+                                    @endif
+                                    @if (!sizeof($data['videoCat']))
+                                        <option selected disabled value="null">We Don't have any Category write now
+                                        </option>
+                                    @endif
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleFormControlFile1">Attach Video</label>
+                                <input type="file" name="video" required class="form-control-file"
+                                    id="exampleFormControlFile1">
+                            </div>
+                            @error('category')
+                                <div class="alert alert-danger" role="alert">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2 mt-5">
+                <div class="row">
+                    <div class="col-lg-12 mt-5 mb-3">
+                        <div class="card">
+                            <div class="card-body  pt-5 pb-5 bg-success text-white">
+                                <i class="fa fa-users"></i> Total Number Of user 02
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 mt-5 mb-3">
+                        <div class="card">
+                            <div class="card-body  pt-5 pb-5 bg-secondary text-white">
+                                <i class="fa fa-edit"></i> Total Number Of Posts 02
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 mt-5 mb-3">
+                        <div class="card">
+                            <div class="card-body  pt-5 pb-5 bg-info text-white">
+                                <i class="fa fa-comments"></i> Number Of Comments 02
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mt-5">
+        <div class=" pt-5">
+            <x-yamba.footer />
+        </div>
+    </div>
+</body>
+
+</html>

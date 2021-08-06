@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateVideoUploadsTable extends Migration
+class CreateVideocetagoriesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,9 @@ class CreateVideoUploadsTable extends Migration
      */
     public function up()
     {
-        Schema::create('video_uploads', function (Blueprint $table) {
+        Schema::create('videocetagories', function (Blueprint $table) {
             $table->id();
+            $table->string("name");
             $table->timestamps();
         });
     }
@@ -26,6 +27,6 @@ class CreateVideoUploadsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('video_uploads');
+        Schema::dropIfExists('videocetagories');
     }
 }
