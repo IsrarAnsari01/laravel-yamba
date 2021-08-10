@@ -19,9 +19,6 @@ class CreateAuthorsTable extends Migration
             $table->string("name");
             $table->string("email");
             $table->string("password");
-            $table->json('videoCat_id')->default(new Expression('(JSON_ARRAY())'));
-            // $table->json('video_uploads_id')->default(new Expression('(JSON_ARRAY())'));
-            // $table->foreign("video_uploads_id")->references("id")->on("video_uploads")->onDelete('cascade');
             $table->timestamps();
         });
     }

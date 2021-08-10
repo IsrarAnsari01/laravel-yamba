@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Author;
+use App\Models\Videocetagory;
+use App\Models\author_videocetagories;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -82,7 +84,7 @@ class AuthorController extends Controller
         $userPosts = Author::find($authorId)->post;
         $userPostedVideos = Author::find($authorId)->postedVideos;
         $userInformation = Author::find($authorId);
-        $sendArray = array("basicInfo" => $userInformation, "userPosts" => $userPosts, "userComments" => $userComments, "PostedVideos" => $userPostedVideos );
+        $sendArray = array("basicInfo" => $userInformation, "userPosts" => $userPosts, "userComments" => $userComments, "PostedVideos" => $userPostedVideos);
         return view("yamba/authorDashboard")->with("userInfo", $sendArray);
     }
 
@@ -140,6 +142,14 @@ class AuthorController extends Controller
         $request->session()->flush();
         return  Redirect::to('/');
     }
+
+    /**
+     * Login User using their email and password
+     *
+     * @param  \Illuminate\Http\Request  $request 
+     * @return Redirect
+     */
+
     public function loginUser(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -152,7 +162,7 @@ class AuthorController extends Controller
         } else {
             $userEmail = $request->input("email");
             $userPassword = $request->input("password");
-            $findUser = DB::table("authors")->where(["email" => $userEmail, "password" => $userPassword])->first();
+            $findUser = DB::table("authors")->where([["email", "=", $userEmail], ["password", "=", $userPassword]])->first();
             if ($findUser) {
                 session(["userId" => $findUser->id]);
                 return redirect("authorDashboard/{$findUser->id}");
@@ -161,33 +171,81 @@ class AuthorController extends Controller
         }
     }
 
+    /**
+     * Logout user 
+     *
+     * @param  \Illuminate\Http\Request  $request 
+     * @return Redirect
+     */
+    
     public function logoutUser(Request $request)
     {
         $request->session()->flush();
         return Redirect::to('/');
     }
-    public function checkVideoCatId($catIdArr , $cat_id){
-            $flag = false;
-            if(sizeof($catIdArr)){
-                foreach($catIdArr as $cat) {
-                    if($cat == $cat_id){
-                        $flag = true;
-                        break;
-                    }
-                }
-            }
+
+    /**
+     * Check Send Video Category already exists or not
+     *
+     * @param  object author, integer $cat_id
+     * @return boolean true / false
+     */
+
+    public function checkVideoCatId($author, $cat_id)
+    {
+        $flag = false;
+        $exists = $author->watchCetagoryId->contains($cat_id);
+        if ($exists) {
+            $flag = true;
             return $flag;
+        }
+        return $flag;
     }
-    public function updateUserVideoCategory(Author $author, $cat_id, $video_id){
-            $loggedUserId = session()->get("userId");
-            $loggedUserInfo = Author::find($loggedUserId);
-            $registeredCat_id = $loggedUserInfo->videoCat_id;
-            if($this->checkVideoCatId($registeredCat_id,  $cat_id)){
-                return redirect()->route("videoUpload.singleVideo", [$video_id]);
-            }
-            array_push($registeredCat_id,  $cat_id);
-                $loggedUserInfo->videoCat_id = $registeredCat_id;
-                $loggedUserInfo->save();
-            return redirect()->route("videoUpload.singleVideo", [$video_id]);
+
+    /**
+     * Add  Video Category Id crossponding to loggin user because of suggestion
+     *
+     * @param  object author, integer $cat_id, integer $video_id
+     * @return Redirect
+     */
+
+    public function updateUserVideoCategory(Author $author, $cat_id, $video_id)
+    {
+        $loggedUserId = session()->get("userId");
+        $loggedUserInfo = Author::find($loggedUserId);
+        if ($this->checkVideoCatId($loggedUserInfo,  $cat_id)) {
+            return redirect()->route("videoUpload.singleVideo", [$video_id, $cat_id]);
+        }
+        $loggedUserInfo->watchCetagoryId()->attach($cat_id);
+        return redirect()->route("videoUpload.singleVideo", [$video_id, $cat_id]);
+    }
+
+    /**
+     * Change the subscription value in many to many table for subscription purpose
+     *
+     * @param  object author, integer $cat_id, integer $video_id, integer $userId
+     * @return Redirect
+     */
+
+    public function subcribeCategory(Author $author, $cat_id, $userId, $video_id)
+    {
+        $user = Author::find($userId);
+        $user->watchCetagoryId()->attach($cat_id, ['subscription' => 1]);
+        return redirect()->route("videoUpload.singleVideo", [$video_id, $cat_id]);
+    }
+
+
+    /**
+     * Change the subscription value to 0 in many to many table for unsubscription purpose
+     *
+     * @param  object author, integer $cat_id, integer $video_id, integer $userId
+     * @return Redirect
+     */
+
+    public function unSubcribeCategory(Author $author, $cat_id, $userId, $video_id)
+    {
+        $user = Author::find($userId);
+        author_videocetagories::where([['author_id', '=', $user->id], ['videocetagory_id', '=', $cat_id]])->update(["subscription" => 0]);
+        return redirect()->route("videoUpload.singleVideo", [$video_id, $cat_id]);
     }
 }

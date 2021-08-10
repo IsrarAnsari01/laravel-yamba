@@ -99,9 +99,9 @@ class VideocommentController extends Controller
      * @param  \App\Models\Videocomment  $Videocomment
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Videocomment $Videocomment)
+    public function destroy(Videocomment $Videocomment, $comment_id)
     {
-        Comment::destroy(array("id", $comment_id));
+        Videocomment::destroy(array("id", $comment_id));
         return redirect("/");
     }
 }

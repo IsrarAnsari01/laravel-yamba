@@ -14,7 +14,9 @@ use Illuminate\Support\Facades\Validator;
 class PostController extends Controller
 {
     /**
-     * Home Page | Get Req
+     * Send User to Home Page 
+     * @param NULL
+     * @return Redirect
      */
     public function index()
     {
@@ -26,7 +28,9 @@ class PostController extends Controller
         return view("yamba/home")->with("data", $arrToBeSend);
     }
     /**
-     * Add Blog Page | Get Req
+     * Create new Blog into portal
+     * @param NULL
+     * @return Redirect
      */
     public function create()
     {
@@ -38,9 +42,13 @@ class PostController extends Controller
         $tagsAndCategories = array("tags" => $registeredTags, "categories" => $registeredCategories);
         return view("yamba/addBlog")->with("tagsAndCats", $tagsAndCategories);
     }
+
     /**
-     * Save New Blog | Post Req
+     * Add new Blog into storage
+     * @param  \Illuminate\Http\Request  $request, integer $author_id
+     * @return Redirect
      */
+
     public function store(Request $request, $author_id)
     {
         $validator = Validator::make($request->all(), [
@@ -73,8 +81,12 @@ class PostController extends Controller
             return Redirect::to("/addBlog");
         }
     }
+
+
     /**
-     * Display All Posts | Get Req
+     * Display All Blogs
+     * @param  Model Post
+     * @return Redirect
      */
     public function show(Post $post)
     {
@@ -86,7 +98,9 @@ class PostController extends Controller
     }
 
     /**
-     * Edit Blog Page | Get Req
+     * Edit Existing Blog
+     * @param  Model Post, Interger $post_id
+     * @return Redirect
      */
 
     public function edit(Post $post, $post_id)
@@ -100,8 +114,11 @@ class PostController extends Controller
     }
 
     /**
-     * Save Updates | Get Req
+     * Save Edited Blog
+     * @param  \Illuminate\Http\Request  $request, Model Post, Interger $post_id,Interger $author_id,
+     * @return Redirect
      */
+
     public function update(Request $request, Post $post, $post_id, $author_id)
     {
         $validator = Validator::make($request->all(), [
@@ -128,8 +145,12 @@ class PostController extends Controller
     }
 
     /**
-     * Delete Post | Get Req
+     * Delete Blog
+     * @param   Model Post, Interger $post_id
+     * @return Redirect
      */
+
+
     public function destroy(Post $post, $post_id)
     {
         Post::destroy(array("id", $post_id));
@@ -140,6 +161,8 @@ class PostController extends Controller
 
     /**
      * Filter Post Through Category | Post Req
+     * @param  \Illuminate\Http\Request  $request
+     * @return Redirect
      */
 
     public function filterPost(Request $request)
@@ -156,6 +179,8 @@ class PostController extends Controller
 
     /**
      * Get Tags and return related Post
+     * @param  array tags
+     * @return array postsRelatedToTags
      */
 
     public function sortingPosts($tags)
@@ -172,8 +197,11 @@ class PostController extends Controller
         }
         return $tag_posts;
     }
+
     /**
      * Filter post through Tags | Post Req
+     * @param  \Illuminate\Http\Request  $request
+     * @return Redirect
      */
 
     public function filterPostThroughTags(Request $request)
@@ -188,6 +216,12 @@ class PostController extends Controller
         $postAnduser = array("posts" => $tag_posts, "userLength" => sizeof($allUsers), "registerTags" => $registeredTags, "catgories" => $categories, "flag" => $filter);
         return view("yamba/post")->with("retriveAllPost", $postAnduser);
     }
+
+     /**
+     * Rediect To the single post
+     * @param  Model Post, integer $post_id
+     * @return Redirect
+     */
 
     public function singlePost(Post $post, $post_id)
     {

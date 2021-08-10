@@ -12,4 +12,8 @@ class Videocetagory extends Model
     {
         return $this->hasMany(videoUpload::class);
     }
+    public function author()
+    {
+        return $this->belongsToMany(Author::class, "author_videocetagories");
+    }
 }
