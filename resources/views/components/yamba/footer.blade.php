@@ -4,7 +4,6 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-4 col-sm-6">
-                        <!--Column1-->
                         <div class="footer-pad">
                             <h4>Latest Blogs</h4>
                             <ul class="list-unstyled">
@@ -15,7 +14,6 @@
                         </div>
                     </div>
                     <div class="col-md-4 col-sm-6">
-                        <!--Column1-->
                         <div class="footer-pad">
                             <h4>Join with us</h4>
                             <ul class="list-unstyled">
@@ -37,11 +35,7 @@
                         <p class="text-center">&copy; Copyright 2021 - IA. All rights reserved.</p>
                     </div>
                 </div>
-
-
             </div>
         </div>
     </footer>
-
-
 </div>
