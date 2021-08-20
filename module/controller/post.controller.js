@@ -1,11 +1,11 @@
 const postModel = require("../../models/modelFunctions/post.function");
 
 module.exports.addNewPost = (req, res) => {
-  let postInfo = req.body.userData;
+  let postInfo = req.body.postData;
   const userId = req.params.id;
   postInfo.userId = userId;
   postModel
-    .addNewUser(postInfo)
+    .addNewPost(postInfo)
     .then((succ) => {
       res.send({ status: true, save });
     })
@@ -14,8 +14,22 @@ module.exports.addNewPost = (req, res) => {
     });
 };
 module.exports.findAllPost = (req, res) => {
+  const pageNum = req.params.pageNo;
+  const sortingTechniqueFromUser = Number(req.params.sort);
+  let page = 0;
+  let sortingTechnique = 0;
+  if (pageNum && !Number.isNaN(pageNum) && pageNum > 0) {
+    page = pageNum;
+  }
+  if (
+    sortingTechniqueFromUser &&
+    !Number.isNaN(sortingTechniqueFromUser) &&
+    sortingTechniqueFromUser >= 0
+  ) {
+    sortingTechnique = sortingTechniqueFromUser;
+  }
   postModel
-    .findAllPost()
+    .findAllPost(page, sortingTechnique)
     .then((succ) => {
       res.send({ status: true, found: succ });
     })
@@ -45,11 +59,11 @@ module.exports.updateSpecficPost = (req, res) => {
     });
 };
 module.exports.singlePost = (req, res) => {
-  const postId = req.params.id
+  const postId = req.params.id;
   postModel
     .findSinglePost(postId)
     .then((succ) => {
-      res.send({ status: true, user: succ });
+      res.send({ status: true, post: succ });
     })
     .catch((err) => {
       res.send({ status: false, err: err });

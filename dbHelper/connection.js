@@ -8,8 +8,8 @@ const db = {};
 
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
-db.user = require("../models/user")(sequelize, DataTypes);
-db.post = require("../models/post")(sequelize, DataTypes);
+// db.user = require("../models/user")(sequelize, DataTypes);
+// db.post = require("../models/post")(sequelize, DataTypes);
 (() => {
   sequelize
     .authenticate()

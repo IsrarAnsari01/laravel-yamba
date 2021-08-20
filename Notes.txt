@@ -1,0 +1,2 @@
+Difference between hasOne and hasMany relation
+HasOne and BelongsTo insert the association key in different models from each other. HasOne inserts the association key in target model whereas BelongsTo inserts the association key in the source model.

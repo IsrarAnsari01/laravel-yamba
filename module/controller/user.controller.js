@@ -61,3 +61,13 @@ module.exports.loginUser = (req, res) => {
       res.send({ status: false, err: err });
     });
 };
+module.exports.getAllPostsOfThisUser = (req, res) => {
+  userModel
+    .findAllPosts(req.params.id)
+    .then((succ) => {
+      res.send({ status: true, posts: succ });
+    })
+    .catch((err) => {
+      res.send({ status: false, err: err });
+    });
+};
